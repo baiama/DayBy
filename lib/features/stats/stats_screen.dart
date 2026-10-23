@@ -87,19 +87,26 @@ class StatsScreen extends ConsumerWidget {
                       for (var i = 0; i < 7; i++)
                         Expanded(
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text('${perDay[i]}', style: AppText.mono(c.text, size: 11)),
                               const SizedBox(height: 4),
-                              AnimatedContainer(
-                                duration: const Duration(milliseconds: 400),
-                                height: 4 + 96 * perDay[i] / maxPerDay,
-                                margin: const EdgeInsets.symmetric(horizontal: 8),
-                                decoration: BoxDecoration(
-                                  color: isSameDay(weekStart.add(Duration(days: i)), today)
-                                      ? c.accent
-                                      : c.accent.withValues(alpha: 0.45),
-                                  borderRadius: BorderRadius.circular(6),
+                              // Bars share whatever height the labels leave,
+                              // so large text sizes cannot overflow the chart.
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: FractionallySizedBox(
+                                    heightFactor: (perDay[i] / maxPerDay).clamp(0.04, 1.0),
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                                      decoration: BoxDecoration(
+                                        color: isSameDay(weekStart.add(Duration(days: i)), today)
+                                            ? c.accent
+                                            : c.accent.withValues(alpha: 0.45),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 6),

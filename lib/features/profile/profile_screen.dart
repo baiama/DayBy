@@ -19,14 +19,15 @@ class ProfileScreen extends ConsumerWidget {
     final look = ref.watch(appearanceProvider);
     final appearance = ref.read(appearanceProvider.notifier);
 
-    Widget card({required Widget child, EdgeInsets? padding}) => Container(
-          width: double.infinity,
-          padding: padding ?? const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: c.card,
-            borderRadius: BorderRadius.circular(28),
+    // Material (not a coloured Container) so ListTile ripples stay visible.
+    Widget card({required Widget child, EdgeInsets? padding}) => Material(
+          color: c.card,
+          borderRadius: BorderRadius.circular(28),
+          clipBehavior: Clip.antiAlias,
+          child: Padding(
+            padding: padding ?? const EdgeInsets.all(20),
+            child: SizedBox(width: double.infinity, child: child),
           ),
-          child: child,
         );
 
     Widget sectionIcon(IconData icon) => Container(
