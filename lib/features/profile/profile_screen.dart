@@ -7,6 +7,7 @@ import '../../core/theme/app_text.dart';
 import '../../core/theme/appearance.dart';
 import '../../core/widgets/gradient_scaffold.dart';
 import '../../core/widgets/segmented_pills.dart';
+import '../../core/widgets/test_id.dart';
 import '../auth/auth_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -19,26 +20,28 @@ class ProfileScreen extends ConsumerWidget {
     final look = ref.watch(appearanceProvider);
     final appearance = ref.read(appearanceProvider.notifier);
 
-    // Material (not a coloured Container) so ListTile ripples stay visible.
+    // Material rather than a decorated Container, so ListTile and TextButton
+    // ripples paint on the card instead of underneath it.
     Widget card({required Widget child, EdgeInsets? padding}) => Material(
-          color: c.card,
-          borderRadius: BorderRadius.circular(28),
-          clipBehavior: Clip.antiAlias,
-          child: Padding(
-            padding: padding ?? const EdgeInsets.all(20),
-            child: SizedBox(width: double.infinity, child: child),
-          ),
-        );
+      color: c.card,
+      borderRadius: BorderRadius.circular(28),
+      clipBehavior: Clip.antiAlias,
+      child: Container(
+        width: double.infinity,
+        padding: padding ?? const EdgeInsets.all(20),
+        child: child,
+      ),
+    );
 
     Widget sectionIcon(IconData icon) => Container(
-          width: 30,
-          height: 30,
-          decoration: BoxDecoration(
-            color: c.accent.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Icon(icon, size: 18, color: c.accent),
-        );
+      width: 30,
+      height: 30,
+      decoration: BoxDecoration(
+        color: c.accent.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Icon(icon, size: 18, color: c.accent),
+    );
 
     return GradientScaffold(
       body: SafeArea(
@@ -47,9 +50,12 @@ class ProfileScreen extends ConsumerWidget {
           children: [
             Row(
               children: [
-                IconButton(
-                  onPressed: () => context.canPop() ? context.pop() : context.go('/home'),
-                  icon: Icon(Icons.arrow_back, color: c.text),
+                TestId(
+                  'profile_back',
+                  child: IconButton(
+                    onPressed: () => context.canPop() ? context.pop() : context.go('/home'),
+                    icon: Icon(Icons.arrow_back, color: c.text),
+                  ),
                 ),
                 Text('DayBy', style: AppText.logo(c.text)),
               ],
@@ -68,9 +74,7 @@ class ProfileScreen extends ConsumerWidget {
                             radius: 35,
                             backgroundColor: c.accent.withValues(alpha: 0.8),
                             child: Text(
-                              (user?.name.isNotEmpty ?? false)
-                                  ? user!.name[0].toUpperCase()
-                                  : 'U',
+                              (user?.name.isNotEmpty ?? false) ? user!.name[0].toUpperCase() : 'U',
                               style: AppText.h2(Colors.white),
                             ),
                           ),
@@ -90,20 +94,32 @@ class ProfileScreen extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(user?.name ?? 'User Name', style: AppText.setting(c.text)),
-                            Text(
-                              user?.email ?? 'useremail@gmail.com',
-                              overflow: TextOverflow.ellipsis,
-                              style: AppText.setting(c.text),
+                            TestId(
+                              'profile_name',
+                              child: Text(
+                                user?.name ?? 'User Name',
+                                style: AppText.setting(c.text),
+                              ),
+                            ),
+                            TestId(
+                              'profile_email',
+                              child: Text(
+                                user?.email ?? 'useremail@gmail.com',
+                                overflow: TextOverflow.ellipsis,
+                                style: AppText.setting(c.text),
+                              ),
                             ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  TextButton(
-                    onPressed: () => _editName(context, ref, user?.name ?? ''),
-                    child: Text('изменить', style: AppText.setting(c.accent)),
+                  TestId(
+                    'profile_edit_name',
+                    child: TextButton(
+                      onPressed: () => _editName(context, ref, user?.name ?? ''),
+                      child: Text('изменить', style: AppText.setting(c.accent)),
+                    ),
                   ),
                 ],
               ),
@@ -113,10 +129,27 @@ class ProfileScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Column(
                 children: [
-                  _MenuRow(icon: Icons.notifications_none, label: 'Уведомления', onTap: () {}),
-                  _MenuRow(icon: Icons.language, label: 'Язык', trailing: 'Русский', onTap: () {}),
-                  _MenuRow(icon: Icons.info_outline, label: 'О приложении', onTap: () {}),
                   _MenuRow(
+                    testId: 'profile_notifications',
+                    icon: Icons.notifications_none,
+                    label: 'Уведомления',
+                    onTap: () {},
+                  ),
+                  _MenuRow(
+                    testId: 'profile_language',
+                    icon: Icons.language,
+                    label: 'Язык',
+                    trailing: 'Русский',
+                    onTap: () {},
+                  ),
+                  _MenuRow(
+                    testId: 'profile_about',
+                    icon: Icons.info_outline,
+                    label: 'О приложении',
+                    onTap: () {},
+                  ),
+                  _MenuRow(
+                    testId: 'profile_logout',
                     icon: Icons.logout,
                     label: 'Выйти',
                     onTap: () {
@@ -147,32 +180,38 @@ class ProfileScreen extends ConsumerWidget {
                       ThemeMode.dark => 'тёмная',
                     },
                     onChanged: appearance.setThemeMode,
+                    idOf: (m) => 'theme_${m.name}',
                   ),
                   Divider(height: 32, color: c.stroke),
-                  Row(children: [
-                    sectionIcon(Icons.palette_outlined),
-                    const SizedBox(width: 6),
-                    Text('Акцентные цвета', style: AppText.setting(c.text)),
-                  ]),
+                  Row(
+                    children: [
+                      sectionIcon(Icons.palette_outlined),
+                      const SizedBox(width: 6),
+                      Text('Акцентные цвета', style: AppText.setting(c.text)),
+                    ],
+                  ),
                   const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      for (final color in AppPalette.accentOptions)
-                        GestureDetector(
-                          onTap: () => appearance.setAccent(color),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 150),
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: color,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: look.accent.toARGB32() == color.toARGB32()
-                                    ? c.text
-                                    : Colors.transparent,
-                                width: 3,
+                      for (final (i, color) in AppPalette.accentOptions.indexed)
+                        TestId(
+                          'accent_$i',
+                          child: GestureDetector(
+                            onTap: () => appearance.setAccent(color),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 150),
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: color,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: look.accent.toARGB32() == color.toARGB32()
+                                      ? c.text
+                                      : Colors.transparent,
+                                  width: 3,
+                                ),
                               ),
                             ),
                           ),
@@ -180,17 +219,20 @@ class ProfileScreen extends ConsumerWidget {
                     ],
                   ),
                   Divider(height: 32, color: c.stroke),
-                  Row(children: [
-                    sectionIcon(Icons.text_fields),
-                    const SizedBox(width: 6),
-                    Text('Размер текста', style: AppText.setting(c.text)),
-                  ]),
+                  Row(
+                    children: [
+                      sectionIcon(Icons.text_fields),
+                      const SizedBox(width: 6),
+                      Text('Размер текста', style: AppText.setting(c.text)),
+                    ],
+                  ),
                   const SizedBox(height: 10),
                   SegmentedPills<TextSize>(
                     values: TextSize.values,
                     selected: look.textSize,
                     labelOf: (s) => s.label,
                     onChanged: appearance.setTextSize,
+                    idOf: (s) => 'text_size_${s.name}',
                   ),
                 ],
               ),
@@ -202,31 +244,69 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   Future<void> _editName(BuildContext context, WidgetRef ref, String current) async {
-    final controller = TextEditingController(text: current);
     final name = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Имя'),
-        content: TextField(controller: controller, autofocus: true),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Отмена')),
-          TextButton(
-            onPressed: () => Navigator.pop(context, controller.text.trim()),
-            child: const Text('Сохранить'),
-          ),
-        ],
-      ),
+      builder: (_) => _NameDialog(initial: current),
     );
-    controller.dispose();
     if (name != null && name.isNotEmpty) {
       ref.read(authProvider.notifier).updateName(name);
     }
   }
 }
 
-class _MenuRow extends StatelessWidget {
-  const _MenuRow({required this.icon, required this.label, required this.onTap, this.trailing});
+/// Owns its controller so it is disposed only after the closing animation,
+/// when the TextField is gone.
+class _NameDialog extends StatefulWidget {
+  const _NameDialog({required this.initial});
 
+  final String initial;
+
+  @override
+  State<_NameDialog> createState() => _NameDialogState();
+}
+
+class _NameDialogState extends State<_NameDialog> {
+  late final _controller = TextEditingController(text: widget.initial);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+    title: const Text('Имя'),
+    content: TestId(
+      'profile_name_input',
+      child: TextField(controller: _controller, autofocus: true),
+    ),
+    actions: [
+      TestId(
+        'profile_name_cancel',
+        child: TextButton(onPressed: () => Navigator.pop(context), child: const Text('Отмена')),
+      ),
+      TestId(
+        'profile_name_save',
+        child: TextButton(
+          onPressed: () => Navigator.pop(context, _controller.text.trim()),
+          child: const Text('Сохранить'),
+        ),
+      ),
+    ],
+  );
+}
+
+class _MenuRow extends StatelessWidget {
+  const _MenuRow({
+    required this.testId,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.trailing,
+  });
+
+  final String testId;
   final IconData icon;
   final String label;
   final String? trailing;
@@ -235,13 +315,16 @@ class _MenuRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    return ListTile(
-      onTap: onTap,
-      leading: Icon(icon, color: c.text),
-      title: Text(label, style: AppText.setting(c.text)),
-      trailing: trailing != null
-          ? Text(trailing!, style: AppText.setting(c.muted).copyWith(fontSize: 14))
-          : Icon(Icons.chevron_right, color: c.muted),
+    return TestId(
+      testId,
+      child: ListTile(
+        onTap: onTap,
+        leading: Icon(icon, color: c.text),
+        title: Text(label, style: AppText.setting(c.text)),
+        trailing: trailing != null
+            ? Text(trailing!, style: AppText.setting(c.muted).copyWith(fontSize: 14))
+            : Icon(Icons.chevron_right, color: c.muted),
+      ),
     );
   }
 }

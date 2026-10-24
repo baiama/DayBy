@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
 import '../theme/app_text.dart';
+import 'test_id.dart';
 
 /// Translucent input from the login and registration screens:
 /// 59 px tall, 20 % white fill, radius 9, soft drop shadow.
 class GlassField extends StatefulWidget {
   const GlassField({
     super.key,
+    required this.testId,
     this.controller,
     this.hint,
     this.textColor,
@@ -18,6 +20,7 @@ class GlassField extends StatefulWidget {
     this.autofillHints,
   });
 
+  final String testId;
   final TextEditingController? controller;
   final String? hint;
   final Color? textColor;
@@ -42,44 +45,47 @@ class _GlassFieldState extends State<GlassField> {
       borderRadius: BorderRadius.circular(9),
       borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.35)),
     );
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(9),
-        boxShadow: const [
-          BoxShadow(color: Color(0x40000000), offset: Offset(0, 4), blurRadius: 4),
-        ],
-      ),
-      child: TextFormField(
-        controller: widget.controller,
-        obscureText: _hidden,
-        keyboardType: widget.keyboardType,
-        textInputAction: widget.textInputAction,
-        validator: widget.validator,
-        autofillHints: widget.autofillHints,
-        cursorColor: textColor,
-        style: AppText.label(textColor).copyWith(fontWeight: FontWeight.w500),
-        decoration: InputDecoration(
-          hintText: widget.hint,
-          hintStyle: AppText.label(textColor),
-          filled: true,
-          fillColor: c.glass,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 15, vertical: 19.5),
-          border: border,
-          enabledBorder: border,
-          focusedBorder: border.copyWith(
-            borderSide: BorderSide(color: c.accent, width: 1.5),
+    return TestId(
+      widget.testId,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(9),
+          boxShadow: const [
+            BoxShadow(color: Color(0x40000000), offset: Offset(0, 4), blurRadius: 4),
+          ],
+        ),
+        child: TextFormField(
+          controller: widget.controller,
+          obscureText: _hidden,
+          keyboardType: widget.keyboardType,
+          textInputAction: widget.textInputAction,
+          validator: widget.validator,
+          autofillHints: widget.autofillHints,
+          cursorColor: textColor,
+          style: AppText.label(textColor).copyWith(fontWeight: FontWeight.w500),
+          decoration: InputDecoration(
+            hintText: widget.hint,
+            hintStyle: AppText.label(textColor),
+            filled: true,
+            fillColor: c.glass,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 19.5),
+            border: border,
+            enabledBorder: border,
+            focusedBorder: border.copyWith(borderSide: BorderSide(color: c.accent, width: 1.5)),
+            errorStyle: AppText.mono(c.accent, size: 11),
+            suffixIcon: widget.obscure
+                ? TestId(
+                    '${widget.testId}_toggle',
+                    child: IconButton(
+                      onPressed: () => setState(() => _hidden = !_hidden),
+                      icon: Icon(
+                        _hidden ? Icons.visibility : Icons.visibility_off,
+                        color: textColor,
+                      ),
+                    ),
+                  )
+                : null,
           ),
-          errorStyle: AppText.mono(c.accent, size: 11),
-          suffixIcon: widget.obscure
-              ? IconButton(
-                  onPressed: () => setState(() => _hidden = !_hidden),
-                  icon: Icon(
-                    _hidden ? Icons.visibility : Icons.visibility_off,
-                    color: textColor,
-                  ),
-                )
-              : null,
         ),
       ),
     );

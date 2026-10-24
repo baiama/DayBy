@@ -1,0 +1,9 @@
+# Fresh start: wait out the splash and land on the login screen.
+appId: com.chotatam.dayby
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: login_email
+    timeout: 10000

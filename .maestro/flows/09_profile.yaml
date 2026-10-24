@@ -1,0 +1,79 @@
+appId: com.chotatam.dayby
+name: Профиль и оформление
+tags:
+  - profile
+---
+- runFlow: ../subflows/login.yaml
+- tapOn:
+    id: home_profile
+- assertVisible:
+    id: profile_name
+    text: tester
+- assertVisible:
+    id: profile_email
+    text: tester@dayby.app
+
+# Cancel keeps the old name
+- tapOn:
+    id: profile_edit_name
+- tapOn:
+    id: profile_name_cancel
+- assertVisible:
+    id: profile_name
+    text: tester
+
+# Rename
+- tapOn:
+    id: profile_edit_name
+- tapOn:
+    id: profile_name_input
+- eraseText: 20
+- inputText: Maestro
+- tapOn:
+    id: profile_name_save
+- assertVisible:
+    id: profile_name
+    text: Maestro
+
+# Menu rows respond to taps
+- tapOn:
+    id: profile_notifications
+- tapOn:
+    id: profile_language
+- tapOn:
+    id: profile_about
+
+# Appearance
+- scrollUntilVisible:
+    element:
+      id: text_size_large
+- tapOn:
+    id: theme_dark
+- tapOn:
+    id: theme_light
+- tapOn:
+    id: theme_system
+- tapOn:
+    id: accent_1
+- tapOn:
+    id: accent_0
+- tapOn:
+    id: text_size_large
+- tapOn:
+    id: text_size_medium
+
+# Back to home, then log out
+- scrollUntilVisible:
+    element:
+      id: profile_back
+    direction: UP
+- tapOn:
+    id: profile_back
+- assertVisible:
+    id: home_progress
+- tapOn:
+    id: home_profile
+- tapOn:
+    id: profile_logout
+- assertVisible:
+    id: login_submit

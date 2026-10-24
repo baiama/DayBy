@@ -1,0 +1,29 @@
+appId: com.chotatam.dayby
+name: Календарь
+tags:
+  - navigation
+---
+- runFlow: ../subflows/login.yaml
+- tapOn:
+    id: tab_calendar
+- assertVisible:
+    id: calendar_day_0
+- assertVisible:
+    id: calendar_day_6
+# Today has demo tasks
+- assertVisible: "Записаться к стоматологу.*"
+
+# Demo data only spans a few days around today, so next week is empty
+- tapOn:
+    id: calendar_next_week
+- assertVisible:
+    id: calendar_empty
+- tapOn:
+    id: calendar_prev_week
+- tapOn:
+    id: calendar_prev_week
+- assertVisible:
+    id: calendar_selected_date
+- tapOn:
+    id: calendar_today
+- assertVisible: "Записаться к стоматологу.*"

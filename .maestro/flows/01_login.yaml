@@ -1,0 +1,49 @@
+appId: com.chotatam.dayby
+name: Вход по почте
+tags:
+  - auth
+---
+- runFlow: ../subflows/launch.yaml
+
+# Empty form shows both errors
+- tapOn:
+    id: login_submit
+- assertVisible: Введите почту
+- assertVisible: Минимум 6 символов
+
+# Bad email format
+- tapOn:
+    id: login_email
+- inputText: not-an-email
+- tapOn:
+    id: login_password
+- pressKey: Enter
+- tapOn:
+    id: login_submit
+- assertVisible: Неверный формат почты
+
+# Fix the email, enter the password, peek at it
+- tapOn:
+    id: login_email
+- eraseText: 20
+- inputText: tester@dayby.app
+- tapOn:
+    id: login_password
+- inputText: secret123
+- pressKey: Enter
+- tapOn:
+    id: login_password_toggle
+- assertVisible: secret123
+- tapOn:
+    id: login_submit
+
+# Home: demo data has 3 of 5 tasks done today
+- extendedWaitUntil:
+    visible:
+      id: home_progress
+    timeout: 5000
+- assertVisible: 60%
+- assertVisible:
+    id: tab_home
+- assertVisible:
+    id: fab_add_task

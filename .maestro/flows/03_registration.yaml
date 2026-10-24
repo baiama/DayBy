@@ -1,0 +1,55 @@
+appId: com.chotatam.dayby
+name: Регистрация
+tags:
+  - auth
+---
+- runFlow: ../subflows/launch.yaml
+- tapOn:
+    id: login_register
+- assertVisible: Давайте создадим вам аккаунт
+
+# Validation
+- tapOn:
+    id: register_submit
+- assertVisible: Введите имя
+- assertVisible: Введите почту
+- assertVisible: Минимум 6 символов
+
+# "Уже есть аккаунт? Войти" goes back to login
+- scrollUntilVisible:
+    element:
+      id: register_login
+- tapOn:
+    id: register_login
+- assertVisible:
+    id: login_submit
+- tapOn:
+    id: login_register
+
+# Fill and submit
+- tapOn:
+    id: register_name
+- inputText: Maestro
+- tapOn:
+    id: register_email
+- inputText: maestro@dayby.app
+- tapOn:
+    id: register_password
+- inputText: secret123
+- pressKey: Enter
+- tapOn:
+    id: register_submit
+- extendedWaitUntil:
+    visible:
+      id: home_progress
+    timeout: 5000
+
+# The new profile is shown
+- tapOn:
+    id: home_profile
+- assertVisible:
+    id: profile_name
+    text: Maestro
+- assertVisible:
+    id: profile_email
+    text: maestro@dayby.app

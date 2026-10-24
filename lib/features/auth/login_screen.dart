@@ -9,6 +9,7 @@ import '../../core/widgets/divider_label.dart';
 import '../../core/widgets/glass_field.dart';
 import '../../core/widgets/gradient_scaffold.dart';
 import '../../core/widgets/primary_button.dart';
+import '../../core/widgets/test_id.dart';
 import 'auth_provider.dart';
 import 'validators.dart';
 
@@ -66,6 +67,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           GlassField(
+                            testId: 'login_email',
                             controller: _email,
                             hint: 'Почта',
                             keyboardType: TextInputType.emailAddress,
@@ -75,6 +77,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           const SizedBox(height: 33),
                           GlassField(
+                            testId: 'login_password',
                             controller: _password,
                             hint: 'Пароль',
                             obscure: true,
@@ -84,21 +87,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           Align(
                             alignment: Alignment.centerRight,
-                            child: TextButton(
-                              onPressed: () => context.push('/forgot-password'),
-                              style: TextButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 4),
-                                minimumSize: Size.zero,
-                              ),
-                              child: Text(
-                                'забыли пароль?',
-                                style: AppText.mono(c.accent, weight: FontWeight.w700),
+                            child: TestId(
+                              'login_forgot_password',
+                              child: TextButton(
+                                onPressed: () => context.push('/forgot-password'),
+                                style: TextButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 4),
+                                  minimumSize: Size.zero,
+                                ),
+                                child: Text(
+                                  'забыли пароль?',
+                                  style: AppText.mono(c.accent, weight: FontWeight.w700),
+                                ),
                               ),
                             ),
                           ),
                           const SizedBox(height: 30),
                           PrimaryButton(
                             label: 'Войти в аккаунт',
+                            testId: 'login_submit',
                             loading: _loading,
                             onPressed: _submit,
                           ),
@@ -110,18 +117,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 36),
                     Row(
                       children: [
-                        for (final (i, icon) in const [
-                          FontAwesomeIcons.google,
-                          FontAwesomeIcons.facebookF,
-                          FontAwesomeIcons.xTwitter,
+                        for (final (i, (icon, name)) in const [
+                          (FontAwesomeIcons.google, 'google'),
+                          (FontAwesomeIcons.facebookF, 'facebook'),
+                          (FontAwesomeIcons.xTwitter, 'x'),
                         ].indexed) ...[
                           if (i > 0) const SizedBox(width: 27),
                           Expanded(
                             child: _SocialButton(
+                              testId: 'login_social_$name',
                               icon: icon,
-                              onTap: () => _run(() => ref
-                                  .read(authProvider.notifier)
-                                  .signInWithProvider(icon.toString())),
+                              onTap: () => _run(
+                                () => ref.read(authProvider.notifier).signInWithProvider(name),
+                              ),
                             ),
                           ),
                         ],
@@ -131,15 +139,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'Нет аккаунта?',
-                          style: AppText.mono(c.text, weight: FontWeight.w300),
-                        ),
-                        TextButton(
-                          onPressed: () => context.push('/register'),
-                          child: Text(
-                            'Создать',
-                            style: AppText.mono(c.text, weight: FontWeight.w700),
+                        Text('Нет аккаунта?', style: AppText.mono(c.text, weight: FontWeight.w300)),
+                        TestId(
+                          'login_register',
+                          child: TextButton(
+                            onPressed: () => context.push('/register'),
+                            child: Text(
+                              'Создать',
+                              style: AppText.mono(c.text, weight: FontWeight.w700),
+                            ),
                           ),
                         ),
                       ],
@@ -156,29 +164,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 }
 
 class _SocialButton extends StatelessWidget {
-  const _SocialButton({required this.icon, required this.onTap});
+  const _SocialButton({required this.testId, required this.icon, required this.onTap});
 
+  final String testId;
   final FaIconData icon;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    return Container(
-      height: 59,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(9),
-        boxShadow: const [
-          BoxShadow(color: Color(0x40000000), offset: Offset(0, 4), blurRadius: 4),
-        ],
-      ),
-      child: Material(
-        color: c.glass,
-        borderRadius: BorderRadius.circular(9),
-        child: InkWell(
+    return TestId(
+      testId,
+      child: Container(
+        height: 59,
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(9),
-          onTap: onTap,
-          child: Center(child: FaIcon(icon, color: c.text, size: 26)),
+          boxShadow: const [
+            BoxShadow(color: Color(0x40000000), offset: Offset(0, 4), blurRadius: 4),
+          ],
+        ),
+        child: Material(
+          color: c.glass,
+          borderRadius: BorderRadius.circular(9),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(9),
+            onTap: onTap,
+            child: Center(child: FaIcon(icon, color: c.text, size: 26)),
+          ),
         ),
       ),
     );

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
 import '../../core/widgets/progress_ring.dart';
+import '../../core/widgets/test_id.dart';
 import 'task_tile.dart';
 import 'tasks_provider.dart';
 
@@ -28,31 +29,35 @@ class HomeScreen extends ConsumerWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 149,
-                height: 149,
-                decoration: BoxDecoration(
-                  color: c.accent.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(9),
-                ),
-                alignment: Alignment.center,
-                child: ProgressRing(
-                  value: progress,
-                  color: c.text,
-                  trackColor: c.accent,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '${(progress * 100).round()}%',
-                        style: AppText.logo(c.text).copyWith(fontSize: 24),
-                      ),
-                      Text(
-                        'Выполнено',
-                        style: AppText.button(c.text)
-                            .copyWith(fontSize: 8, fontWeight: FontWeight.w500),
-                      ),
-                    ],
+              TestId(
+                'home_progress',
+                keepChildren: true,
+                child: Container(
+                  width: 149,
+                  height: 149,
+                  decoration: BoxDecoration(
+                    color: c.accent.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                  alignment: Alignment.center,
+                  child: ProgressRing(
+                    value: progress,
+                    color: c.text,
+                    trackColor: c.accent,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${(progress * 100).round()}%',
+                          style: AppText.logo(c.text).copyWith(fontSize: 24),
+                        ),
+                        Text(
+                          'Выполнено',
+                          style: AppText.button(c.text)
+                              .copyWith(fontSize: 8, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -60,6 +65,8 @@ class HomeScreen extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 7),
                 child: Semantics(
+                  identifier: 'home_profile',
+                  container: true,
                   label: 'Профиль',
                   button: true,
                   child: InkWell(
@@ -79,7 +86,7 @@ class HomeScreen extends ConsumerWidget {
           Text('Важные задачи', style: AppText.section(c.text)),
           const SizedBox(height: 16),
           if (important.isEmpty)
-            _Empty(text: 'Нет важных задач на сегодня')
+            const TestId('home_important_empty', child: _Empty(text: 'Нет важных задач на сегодня'))
           else
             for (final t in important) TaskTile(task: t),
           if (rest.isNotEmpty) ...[
@@ -101,7 +108,7 @@ class _Empty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 24),
-        child: Text(text, style: AppText.body(context.colors.muted)),
-      );
+    padding: const EdgeInsets.symmetric(vertical: 24),
+    child: Text(text, style: AppText.body(context.colors.muted)),
+  );
 }

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
 import '../../core/widgets/progress_ring.dart';
+import '../../core/widgets/test_id.dart';
 import '../calendar/week_strip.dart';
 import '../tasks/tasks_provider.dart';
 
@@ -21,20 +22,15 @@ class StatsScreen extends ConsumerWidget {
     final weekStart = today.subtract(Duration(days: today.weekday - 1));
     final perDay = [
       for (var i = 0; i < 7; i++)
-        tasks
-            .where((t) => t.done && isSameDay(t.date, weekStart.add(Duration(days: i))))
-            .length,
+        tasks.where((t) => t.done && isSameDay(t.date, weekStart.add(Duration(days: i)))).length,
     ];
     final maxPerDay = perDay.fold<int>(1, (m, v) => v > m ? v : m);
 
     Widget card({required Widget child}) => Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: c.card,
-            borderRadius: BorderRadius.circular(28),
-          ),
-          child: child,
-        );
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(color: c.card, borderRadius: BorderRadius.circular(28)),
+      child: child,
+    );
 
     return SafeArea(
       bottom: false,
@@ -61,11 +57,20 @@ class StatsScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Всего задач: $total', style: AppText.setting(c.text)),
+                      TestId(
+                        'stats_total',
+                        child: Text('Всего задач: $total', style: AppText.setting(c.text)),
+                      ),
                       const SizedBox(height: 6),
-                      Text('Выполнено: $done', style: AppText.setting(c.text)),
+                      TestId(
+                        'stats_done',
+                        child: Text('Выполнено: $done', style: AppText.setting(c.text)),
+                      ),
                       const SizedBox(height: 6),
-                      Text('Осталось: ${total - done}', style: AppText.setting(c.muted)),
+                      TestId(
+                        'stats_left',
+                        child: Text('Осталось: ${total - done}', style: AppText.setting(c.muted)),
+                      ),
                     ],
                   ),
                 ),
@@ -79,42 +84,42 @@ class StatsScreen extends ConsumerWidget {
               children: [
                 Text('Выполнено за неделю', style: AppText.h3(c.text)),
                 const SizedBox(height: 20),
-                SizedBox(
-                  height: 140,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      for (var i = 0; i < 7; i++)
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Text('${perDay[i]}', style: AppText.mono(c.text, size: 11)),
-                              const SizedBox(height: 4),
-                              // Bars share whatever height the labels leave,
-                              // so large text sizes cannot overflow the chart.
-                              Expanded(
-                                child: Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: FractionallySizedBox(
-                                    heightFactor: (perDay[i] / maxPerDay).clamp(0.04, 1.0),
-                                    child: Container(
-                                      margin: const EdgeInsets.symmetric(horizontal: 8),
-                                      decoration: BoxDecoration(
-                                        color: isSameDay(weekStart.add(Duration(days: i)), today)
-                                            ? c.accent
-                                            : c.accent.withValues(alpha: 0.45),
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
+                TestId(
+                  'stats_week_chart',
+                  child: SizedBox(
+                    height: 140,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        for (var i = 0; i < 7; i++)
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text('${perDay[i]}', style: AppText.mono(c.text, size: 11)),
+                                const SizedBox(height: 4),
+                                // Flexible lets the tallest bar give up a few px when
+                                // larger text eats into the 140 px, instead of overflowing.
+                                Flexible(
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 400),
+                                    height: 4 + 96 * perDay[i] / maxPerDay,
+                                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                                    decoration: BoxDecoration(
+                                      color: isSameDay(weekStart.add(Duration(days: i)), today)
+                                          ? c.accent
+                                          : c.accent.withValues(alpha: 0.45),
+                                      borderRadius: BorderRadius.circular(6),
                                     ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(weekdayShort[i], style: AppText.mono(c.muted, size: 11)),
-                            ],
+                                const SizedBox(height: 6),
+                                Text(weekdayShort[i], style: AppText.mono(c.muted, size: 11)),
+                              ],
+                            ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],

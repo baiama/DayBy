@@ -1,0 +1,3 @@
+# Run everything: maestro test .maestro
+flows:
+  - "flows/*"

@@ -1,0 +1,65 @@
+appId: com.chotatam.dayby
+# Task rows read as "title + list caption" in one node, so title asserts end in ".*".
+name: "Задачи: создать, отметить, изменить, удалить"
+tags:
+  - tasks
+---
+- runFlow: ../subflows/login.yaml
+
+# Create an important task in «Личное»
+- tapOn:
+    id: fab_add_task
+- assertVisible: Новая задача
+- tapOn:
+    id: task_editor_title
+- inputText: Maestro task
+- tapOn:
+    id: task_editor_important
+- tapOn:
+    id: task_editor_list_personal
+- tapOn:
+    id: task_editor_save
+- assertVisible:
+    id: task_100
+- assertVisible: "Maestro task.*"
+# 3 of 6 done now
+- assertVisible: 50%
+
+# Tick «Записаться к стоматологу»: 4 of 6
+- tapOn:
+    id: task_4_checkbox
+- assertVisible: 67%
+# and untick it again
+- tapOn:
+    id: task_4_checkbox
+- assertVisible: 50%
+
+# Rename «Ответить на письма»
+- tapOn:
+    id: task_5
+- assertVisible: Задача
+- tapOn:
+    id: task_editor_title
+- eraseText: 40
+- inputText: Renamed by Maestro
+- tapOn:
+    id: task_editor_save
+- assertVisible: "Renamed by Maestro.*"
+- assertNotVisible: "Ответить на письма.*"
+
+# Swipe it away (scroll it out from under the tab bar first)
+- scrollUntilVisible:
+    element:
+      id: task_5
+    centerElement: true
+# Start at the checkbox on the right edge: from the row's centre the drag
+# is too short to pass Dismissible's threshold.
+- swipe:
+    from:
+      id: task_5_checkbox
+    direction: LEFT
+    duration: 300
+- waitForAnimationToEnd
+- assertNotVisible:
+    id: task_5
+- assertNotVisible: "Renamed by Maestro.*"

@@ -5,6 +5,7 @@ import '../../features/tasks/task_editor_sheet.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text.dart';
 import 'gradient_scaffold.dart';
+import 'test_id.dart';
 
 /// Tab shell from the home frame: olive divider line, four tabs, «+» FAB.
 class AppShell extends StatelessWidget {
@@ -13,10 +14,10 @@ class AppShell extends StatelessWidget {
   final StatefulNavigationShell shell;
 
   static const _tabs = [
-    (Icons.home_outlined, Icons.home, 'Главная'),
-    (Icons.format_list_bulleted, Icons.format_list_bulleted, 'Мои списки'),
-    (Icons.bar_chart_outlined, Icons.bar_chart, 'Статистика'),
-    (Icons.today_outlined, Icons.today, 'Календарь'),
+    (Icons.home_outlined, Icons.home, 'Главная', 'tab_home'),
+    (Icons.format_list_bulleted, Icons.format_list_bulleted, 'Мои списки', 'tab_lists'),
+    (Icons.bar_chart_outlined, Icons.bar_chart, 'Статистика', 'tab_stats'),
+    (Icons.today_outlined, Icons.today, 'Календарь', 'tab_calendar'),
   ];
 
   @override
@@ -45,30 +46,33 @@ class AppShell extends StatelessWidget {
           ),
           child: Row(
             children: [
-              for (final (i, (icon, activeIcon, label)) in _tabs.indexed)
+              for (final (i, (icon, activeIcon, label, id)) in _tabs.indexed)
                 Expanded(
-                  child: InkResponse(
-                    onTap: () => shell.goBranch(i, initialLocation: i == shell.currentIndex),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            i == shell.currentIndex ? activeIcon : icon,
-                            size: 28,
-                            color: i == shell.currentIndex ? c.accent : c.text,
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            label,
-                            style: AppText.mono(
-                              i == shell.currentIndex ? c.accent : c.text,
-                              size: 10,
-                              weight: FontWeight.w500,
+                  child: TestId(
+                    id,
+                    child: InkResponse(
+                      onTap: () => shell.goBranch(i, initialLocation: i == shell.currentIndex),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              i == shell.currentIndex ? activeIcon : icon,
+                              size: 28,
+                              color: i == shell.currentIndex ? c.accent : c.text,
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 2),
+                            Text(
+                              label,
+                              style: AppText.mono(
+                                i == shell.currentIndex ? c.accent : c.text,
+                                size: 10,
+                                weight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -90,6 +94,8 @@ class _AddButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     return Semantics(
+      identifier: 'fab_add_task',
+      container: true,
       label: 'Новая задача',
       button: true,
       child: Container(

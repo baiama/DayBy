@@ -1,0 +1,22 @@
+appId: com.chotatam.dayby
+name: Статистика
+tags:
+  - navigation
+---
+- runFlow: ../subflows/login.yaml
+- tapOn:
+    id: tab_stats
+- assertVisible:
+    id: stats_total
+    text: "Всего задач: 12"
+- assertVisible:
+    id: stats_done
+    text: "Выполнено: 6"
+- assertVisible:
+    id: stats_left
+    text: "Осталось: 6"
+- assertVisible:
+    id: stats_week_chart
+# No «+» on this tab
+- assertNotVisible:
+    id: fab_add_task

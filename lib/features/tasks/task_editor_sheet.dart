@@ -4,16 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
 import '../../core/widgets/primary_button.dart';
+import '../../core/widgets/test_id.dart';
 import 'task.dart';
 import 'tasks_provider.dart';
 
 /// Create or edit a task. Not in the Figma file yet; styled after it.
-Future<void> showTaskEditor(
-  BuildContext context, {
-  Task? task,
-  DateTime? date,
-  String? listId,
-}) {
+Future<void> showTaskEditor(BuildContext context, {Task? task, DateTime? date, String? listId}) {
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -56,12 +52,9 @@ class _TaskEditorState extends ConsumerState<_TaskEditor> {
     if (task == null) {
       notifier.add(title: title, date: _date, listId: _listId, important: _important);
     } else {
-      notifier.update(task.copyWith(
-        title: title,
-        date: dateOnly(_date),
-        listId: _listId,
-        important: _important,
-      ));
+      notifier.update(
+        task.copyWith(title: title, date: dateOnly(_date), listId: _listId, important: _important),
+      );
     }
     Navigator.pop(context);
   }
@@ -82,31 +75,33 @@ class _TaskEditorState extends ConsumerState<_TaskEditor> {
     final c = context.colors;
     final lists = ref.watch(listsProvider);
     return Padding(
-      padding: EdgeInsets.fromLTRB(
-          24, 0, 24, 24 + MediaQuery.viewInsetsOf(context).bottom),
+      padding: EdgeInsets.fromLTRB(24, 0, 24, 24 + MediaQuery.viewInsetsOf(context).bottom),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(widget.task == null ? 'Новая задача' : 'Задача', style: AppText.h3(c.text)),
           const SizedBox(height: 16),
-          TextField(
-            controller: _title,
-            autofocus: widget.task == null,
-            textCapitalization: TextCapitalization.sentences,
-            onSubmitted: (_) => _save(),
-            style: AppText.body(c.text).copyWith(fontSize: 16),
-            decoration: InputDecoration(
-              hintText: 'Что нужно сделать?',
-              filled: true,
-              fillColor: c.card,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(9),
-                borderSide: BorderSide(color: c.stroke),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(9),
-                borderSide: BorderSide(color: c.stroke),
+          TestId(
+            'task_editor_title',
+            child: TextField(
+              controller: _title,
+              autofocus: widget.task == null,
+              textCapitalization: TextCapitalization.sentences,
+              onSubmitted: (_) => _save(),
+              style: AppText.body(c.text).copyWith(fontSize: 16),
+              decoration: InputDecoration(
+                hintText: 'Что нужно сделать?',
+                filled: true,
+                fillColor: c.card,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(9),
+                  borderSide: BorderSide(color: c.stroke),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(9),
+                  borderSide: BorderSide(color: c.stroke),
+                ),
               ),
             ),
           ),
@@ -115,29 +110,40 @@ class _TaskEditorState extends ConsumerState<_TaskEditor> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              ActionChip(
-                avatar: Icon(Icons.today, size: 18, color: c.text),
-                label: Text('${_date.day}.${_date.month.toString().padLeft(2, '0')}.${_date.year}'),
-                onPressed: _pickDate,
+              TestId(
+                'task_editor_date',
+                child: ActionChip(
+                  avatar: Icon(Icons.today, size: 18, color: c.text),
+                  label: Text(
+                    '${_date.day}.${_date.month.toString().padLeft(2, '0')}.${_date.year}',
+                  ),
+                  onPressed: _pickDate,
+                ),
               ),
-              FilterChip(
-                avatar: Icon(Icons.star_rounded, size: 18, color: c.accent),
-                label: const Text('Важная'),
-                selected: _important,
-                selectedColor: c.accent.withValues(alpha: 0.25),
-                onSelected: (v) => setState(() => _important = v),
+              TestId(
+                'task_editor_important',
+                child: FilterChip(
+                  avatar: Icon(Icons.star_rounded, size: 18, color: c.accent),
+                  label: const Text('Важная'),
+                  selected: _important,
+                  selectedColor: c.accent.withValues(alpha: 0.25),
+                  onSelected: (v) => setState(() => _important = v),
+                ),
               ),
               for (final l in lists)
-                ChoiceChip(
-                  label: Text('${l.emoji} ${l.name}'),
-                  selected: _listId == l.id,
-                  selectedColor: c.accent.withValues(alpha: 0.25),
-                  onSelected: (v) => setState(() => _listId = v ? l.id : null),
+                TestId(
+                  'task_editor_list_${l.id}',
+                  child: ChoiceChip(
+                    label: Text('${l.emoji} ${l.name}'),
+                    selected: _listId == l.id,
+                    selectedColor: c.accent.withValues(alpha: 0.25),
+                    onSelected: (v) => setState(() => _listId = v ? l.id : null),
+                  ),
                 ),
             ],
           ),
           const SizedBox(height: 24),
-          PrimaryButton(label: 'Сохранить', onPressed: _save),
+          PrimaryButton(label: 'Сохранить', testId: 'task_editor_save', onPressed: _save),
         ],
       ),
     );

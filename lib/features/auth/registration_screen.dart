@@ -7,6 +7,7 @@ import '../../core/widgets/dayby_logo.dart';
 import '../../core/widgets/glass_field.dart';
 import '../../core/widgets/gradient_scaffold.dart';
 import '../../core/widgets/primary_button.dart';
+import '../../core/widgets/test_id.dart';
 import 'auth_provider.dart';
 import 'validators.dart';
 
@@ -45,13 +46,13 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
   }
 
   Widget _labeled(String label, Widget field) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: AppText.label(_light)),
-          const SizedBox(height: 2),
-          field,
-        ],
-      );
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label, style: AppText.label(_light)),
+      const SizedBox(height: 2),
+      field,
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +83,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                     _labeled(
                       'Имя',
                       GlassField(
+                        testId: 'register_name',
                         controller: _name,
                         textColor: _light,
                         textInputAction: TextInputAction.next,
@@ -93,6 +95,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                     _labeled(
                       'Электронная почта',
                       GlassField(
+                        testId: 'register_email',
                         controller: _email,
                         textColor: _light,
                         keyboardType: TextInputType.emailAddress,
@@ -105,6 +108,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                     _labeled(
                       'Пароль',
                       GlassField(
+                        testId: 'register_password',
                         controller: _password,
                         textColor: _light,
                         obscure: true,
@@ -115,6 +119,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                     const SizedBox(height: 52),
                     PrimaryButton(
                       label: 'Зарегистрироваться',
+                      testId: 'register_submit',
                       background: _light,
                       foreground: const Color(0xFF5E604D),
                       shadow: const Color(0xFF4D4D41),
@@ -125,22 +130,27 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                     const Center(child: DayByLogo(width: 72, color: _light)),
                     const SizedBox(height: 22),
                     Center(
-                      child: InkWell(
-                        onTap: () => context.canPop() ? context.pop() : context.go('/login'),
-                        child: Container(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          decoration: const BoxDecoration(
-                            border: Border(bottom: BorderSide(color: Colors.black)),
-                          ),
-                          child: Text.rich(
-                            TextSpan(children: [
-                              const TextSpan(text: 'Уже есть аккаунт?   '),
+                      child: TestId(
+                        'register_login',
+                        child: InkWell(
+                          onTap: () => context.canPop() ? context.pop() : context.go('/login'),
+                          child: Container(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            decoration: const BoxDecoration(
+                              border: Border(bottom: BorderSide(color: Colors.black)),
+                            ),
+                            child: Text.rich(
                               TextSpan(
-                                text: 'Войти',
-                                style: AppText.mono(Colors.black, weight: FontWeight.w700),
+                                children: [
+                                  const TextSpan(text: 'Уже есть аккаунт?   '),
+                                  TextSpan(
+                                    text: 'Войти',
+                                    style: AppText.mono(Colors.black, weight: FontWeight.w700),
+                                  ),
+                                ],
                               ),
-                            ]),
-                            style: AppText.mono(Colors.black, weight: FontWeight.w500),
+                              style: AppText.mono(Colors.black, weight: FontWeight.w500),
+                            ),
                           ),
                         ),
                       ),

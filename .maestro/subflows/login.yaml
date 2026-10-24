@@ -1,0 +1,20 @@
+# Signs in with email and waits for the home tab.
+appId: com.chotatam.dayby
+env:
+  EMAIL: tester@dayby.app
+  PASSWORD: secret123
+---
+- runFlow: launch.yaml
+- tapOn:
+    id: login_email
+- inputText: ${EMAIL}
+- tapOn:
+    id: login_password
+- inputText: ${PASSWORD}
+- pressKey: Enter
+- tapOn:
+    id: login_submit
+- extendedWaitUntil:
+    visible:
+      id: home_progress
+    timeout: 5000

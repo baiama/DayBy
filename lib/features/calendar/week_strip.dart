@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
+import '../../core/widgets/test_id.dart';
 
 const weekdayShort = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
 
@@ -29,13 +30,16 @@ class WeekStrip extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 2.5),
-              child: _DayPill(
-                date: weekStart.add(Duration(days: i)),
-                label: weekdayShort[i],
-                selected: DateUtils.isSameDay(weekStart.add(Duration(days: i)), selected),
-                dot: hasTasks(weekStart.add(Duration(days: i))),
-                colors: c,
-                onTap: () => onSelected(weekStart.add(Duration(days: i))),
+              child: TestId(
+                'calendar_day_$i',
+                child: _DayPill(
+                  date: weekStart.add(Duration(days: i)),
+                  label: weekdayShort[i],
+                  selected: DateUtils.isSameDay(weekStart.add(Duration(days: i)), selected),
+                  dot: hasTasks(weekStart.add(Duration(days: i))),
+                  colors: c,
+                  onTap: () => onSelected(weekStart.add(Duration(days: i))),
+                ),
               ),
             ),
           ),
@@ -77,14 +81,10 @@ class _DayPill extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             FittedBox(
-              child: Text(label,
-                  style: AppText.mono(fg, size: 22, weight: FontWeight.w500)),
+              child: Text(label, style: AppText.mono(fg, size: 22, weight: FontWeight.w500)),
             ),
             Text('${date.day}', style: AppText.mono(fg, size: 13)),
-            SizedBox(
-              height: 12,
-              child: dot ? Text('•••', style: AppText.mono(fg, size: 8)) : null,
-            ),
+            SizedBox(height: 12, child: dot ? Text('•••', style: AppText.mono(fg, size: 8)) : null),
           ],
         ),
       ),

@@ -1,0 +1,23 @@
+appId: com.chotatam.dayby
+name: Мои списки
+tags:
+  - navigation
+---
+- runFlow: ../subflows/login.yaml
+- tapOn:
+    id: tab_lists
+- assertVisible:
+    id: list_work
+- assertVisible:
+    id: list_personal
+- assertVisible:
+    id: list_shopping
+- tapOn:
+    id: list_work
+- assertVisible: "Сдать отчёт по проекту.*"
+- assertVisible: "Ревью кода.*"
+- assertNotVisible: "Позвонить маме.*"
+- tapOn:
+    id: list_back
+- assertVisible:
+    id: list_shopping

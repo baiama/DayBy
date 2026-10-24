@@ -3,25 +3,42 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
+import '../../core/widgets/test_id.dart';
 import '../auth/auth_provider.dart';
 import '../tasks/task_tile.dart';
 import '../tasks/tasks_provider.dart';
 import 'week_strip.dart';
 
 const monthsGenitive = [
-  'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
-  'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря',
+  'января',
+  'февраля',
+  'марта',
+  'апреля',
+  'мая',
+  'июня',
+  'июля',
+  'августа',
+  'сентября',
+  'октября',
+  'ноября',
+  'декабря',
 ];
 const weekdayFull = [
-  'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье',
+  'Понедельник',
+  'Вторник',
+  'Среда',
+  'Четверг',
+  'Пятница',
+  'Суббота',
+  'Воскресенье',
 ];
 
 String greeting(DateTime now) => switch (now.hour) {
-      < 6 => 'Доброй ночи',
-      < 12 => 'Доброе утро',
-      < 18 => 'Добрый день',
-      _ => 'Добрый вечер',
-    };
+  < 6 => 'Доброй ночи',
+  < 12 => 'Доброе утро',
+  < 18 => 'Добрый день',
+  _ => 'Добрый вечер',
+};
 
 /// Calendar tab: greeting header and week strip from the «Home» draft frame,
 /// then the tasks for the selected day.
@@ -35,8 +52,7 @@ class CalendarScreen extends ConsumerStatefulWidget {
 class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   DateTime _selected = dateOnly(DateTime.now());
 
-  DateTime get _weekStart =>
-      _selected.subtract(Duration(days: _selected.weekday - 1));
+  DateTime get _weekStart => _selected.subtract(Duration(days: _selected.weekday - 1));
 
   void _shiftWeek(int weeks) =>
       setState(() => _selected = _selected.add(Duration(days: 7 * weeks)));
@@ -62,8 +78,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('${greeting(now)}, ${user?.name ?? 'User'}',
-                          style: AppText.mono(c.muted, size: 10)),
+                      Text(
+                        '${greeting(now)}, ${user?.name ?? 'User'}',
+                        style: AppText.mono(c.muted, size: 10),
+                      ),
                       Text(
                         '${weekdayFull[now.weekday - 1]} ${now.day} ${monthsGenitive[now.month - 1]}',
                         style: AppText.mono(c.text, size: 13, weight: FontWeight.w500),
@@ -71,10 +89,13 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     ],
                   ),
                 ),
-                IconButton(
-                  tooltip: 'Сегодня',
-                  onPressed: () => setState(() => _selected = dateOnly(now)),
-                  icon: Icon(Icons.today, color: c.text),
+                TestId(
+                  'calendar_today',
+                  child: IconButton(
+                    tooltip: 'Сегодня',
+                    onPressed: () => setState(() => _selected = dateOnly(now)),
+                    icon: Icon(Icons.today, color: c.text),
+                  ),
                 ),
               ],
             ),
@@ -99,19 +120,39 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: Text(
-                    '${_selected.day} ${monthsGenitive[_selected.month - 1]}',
-                    style: AppText.section(c.text),
+                  child: TestId(
+                    'calendar_selected_date',
+                    child: Text(
+                      '${_selected.day} ${monthsGenitive[_selected.month - 1]}',
+                      style: AppText.section(c.text),
+                    ),
                   ),
                 ),
-                IconButton(onPressed: () => _shiftWeek(-1), icon: Icon(Icons.chevron_left, color: c.text)),
-                IconButton(onPressed: () => _shiftWeek(1), icon: Icon(Icons.chevron_right, color: c.text)),
+                TestId(
+                  'calendar_prev_week',
+                  child: IconButton(
+                    onPressed: () => _shiftWeek(-1),
+                    icon: Icon(Icons.chevron_left, color: c.text),
+                  ),
+                ),
+                TestId(
+                  'calendar_next_week',
+                  child: IconButton(
+                    onPressed: () => _shiftWeek(1),
+                    icon: Icon(Icons.chevron_right, color: c.text),
+                  ),
+                ),
               ],
             ),
           ),
           Expanded(
             child: dayTasks.isEmpty
-                ? Center(child: Text('На этот день задач нет', style: AppText.body(c.muted)))
+                ? Center(
+                    child: TestId(
+                      'calendar_empty',
+                      child: Text('На этот день задач нет', style: AppText.body(c.muted)),
+                    ),
+                  )
                 : ListView(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
                     children: [for (final t in dayTasks) TaskTile(task: t)],
