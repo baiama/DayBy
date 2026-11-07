@@ -190,7 +190,10 @@ class SettingsScreen extends ConsumerWidget {
         title: const Text('Удалить выполненные?'),
         content: Text('Будет удалено $count ${plural(count, 'задача', 'задачи', 'задач')}.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Отмена')),
+          TestId(
+            'settings_clear_cancel',
+            child: TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Отмена')),
+          ),
           TestId(
             'settings_clear_confirm',
             child: TextButton(

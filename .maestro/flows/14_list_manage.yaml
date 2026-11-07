@@ -38,3 +38,26 @@ tags:
     id: list_back
 - assertVisible:
     id: list_custom1
+
+# Rename, then delete via the menu
+- tapOn:
+    id: list_custom1
+- tapOn:
+    id: list_menu
+- tapOn:
+    id: list_menu_edit
+- tapOn:
+    id: list_editor_name
+- eraseText: 20
+- inputText: Dacha
+- tapOn:
+    id: list_editor_save
+- assertVisible: "Dacha.*"
+- tapOn:
+    id: list_menu
+- tapOn:
+    id: list_menu_delete
+- tapOn:
+    id: list_delete_confirm
+- assertNotVisible:
+    id: list_custom1

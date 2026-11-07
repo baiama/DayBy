@@ -180,19 +180,24 @@ class _ListDetailScreenState extends ConsumerState<ListDetailScreen> {
         backgroundColor: Colors.transparent,
         leading: const TestId('list_back', child: BackButton()),
         actions: [
-          PopupMenuButton<String>(
-            key: const ValueKey('list_menu'),
-            icon: Icon(Icons.more_vert, color: c.text),
-            onSelected: (v) => switch (v) {
-              'edit' => _edit(list),
-              'clear' => _clearDone(),
-              _ => _delete(list),
-            },
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: 'edit', child: Text('Переименовать')),
-              PopupMenuItem(value: 'clear', child: Text('Удалить выполненные')),
-              PopupMenuItem(value: 'delete', child: Text('Удалить список')),
-            ],
+          TestId(
+            'list_menu',
+            child: PopupMenuButton<String>(
+              icon: Icon(Icons.more_vert, color: c.text),
+              onSelected: (v) => switch (v) {
+                'edit' => _edit(list),
+                'clear' => _clearDone(),
+                _ => _delete(list),
+              },
+              itemBuilder: (_) => [
+                for (final (v, label) in const [
+                  ('edit', 'Переименовать'),
+                  ('clear', 'Удалить выполненные'),
+                  ('delete', 'Удалить список'),
+                ])
+                  PopupMenuItem(value: v, child: TestId('list_menu_$v', child: Text(label))),
+              ],
+            ),
           ),
         ],
       ),
@@ -331,7 +336,10 @@ class _ListDetailScreenState extends ConsumerState<ListDetailScreen> {
         title: Text('Удалить «${list.name}»?'),
         content: const Text('Задачи останутся, но без списка.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Отмена')),
+          TestId(
+            'list_delete_cancel',
+            child: TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Отмена')),
+          ),
           TestId(
             'list_delete_confirm',
             child: TextButton(
