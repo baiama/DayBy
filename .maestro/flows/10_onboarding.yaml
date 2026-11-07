@@ -1,0 +1,32 @@
+appId: com.chotatam.dayby
+name: Онбординг
+tags:
+  - onboarding
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: onboarding_page_0
+    timeout: 10000
+- assertVisible: Планируйте день
+- tapOn:
+    id: onboarding_next
+- assertVisible: Всё по полочкам
+- swipe:
+    direction: LEFT
+- assertVisible: Видно прогресс
+- assertVisible: Начать
+- tapOn:
+    id: onboarding_next
+- assertVisible:
+    id: login_email
+# Shown once: a relaunch goes straight to login
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: login_email
+    timeout: 10000
+- assertNotVisible:
+    id: onboarding_skip

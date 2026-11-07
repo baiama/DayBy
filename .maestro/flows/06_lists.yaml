@@ -14,8 +14,11 @@ tags:
     id: list_shopping
 - tapOn:
     id: list_work
-- assertVisible: "Сдать отчёт по проекту.*"
+- assertVisible:
+    id: list_header
 - assertVisible: "Ревью кода.*"
+- scrollUntilVisible:
+    element: "Сдать отчёт по проекту.*"
 - assertNotVisible: "Позвонить маме.*"
 - tapOn:
     id: list_back

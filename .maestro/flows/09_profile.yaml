@@ -35,13 +35,31 @@ tags:
     id: profile_name
     text: Maestro
 
-# Menu rows respond to taps
+# Menu rows open settings and «О приложении»
 - tapOn:
     id: profile_notifications
+- assertVisible:
+    id: settings_reminders
+- tapOn:
+    id: settings_back
 - tapOn:
     id: profile_language
+- assertVisible:
+    id: settings_reminders
+- tapOn:
+    id: settings_back
+- tapOn:
+    id: profile_settings
+- assertVisible:
+    id: settings_reminders
+- tapOn:
+    id: settings_back
 - tapOn:
     id: profile_about
+- assertVisible:
+    id: about_version
+- tapOn:
+    id: about_back
 
 # Appearance
 - scrollUntilVisible:

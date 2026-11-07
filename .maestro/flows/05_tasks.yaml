@@ -34,9 +34,13 @@ tags:
     id: task_4_checkbox
 - assertVisible: 50%
 
-# Rename «Ответить на письма»
+# Rename «Ответить на письма» from its details screen
 - tapOn:
     id: task_5
+- assertVisible:
+    id: task_detail_title
+- tapOn:
+    id: task_detail_edit
 - assertVisible: Задача
 - tapOn:
     id: task_editor_title
@@ -44,6 +48,11 @@ tags:
 - inputText: Renamed by Maestro
 - tapOn:
     id: task_editor_save
+- assertVisible:
+    id: task_detail_title
+    text: Renamed by Maestro
+- tapOn:
+    id: task_detail_back
 - assertVisible: "Renamed by Maestro.*"
 - assertNotVisible: "Ответить на письма.*"
 

@@ -1,9 +1,15 @@
-# Fresh start: wait out the splash and land on the login screen.
+# Fresh start: wait out the splash, skip the intro slides, land on login.
 appId: com.chotatam.dayby
 ---
 - launchApp:
     clearState: true
 - extendedWaitUntil:
     visible:
-      id: login_email
+      id: onboarding_skip
     timeout: 10000
+- tapOn:
+    id: onboarding_skip
+- extendedWaitUntil:
+    visible:
+      id: login_email
+    timeout: 5000

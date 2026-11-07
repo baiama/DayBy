@@ -1,0 +1,49 @@
+appId: com.chotatam.dayby
+name: Детали задачи
+tags:
+  - tasks
+---
+- runFlow: ../subflows/login.yaml
+- tapOn:
+    id: task_4
+- assertVisible:
+    id: task_detail_title
+    text: Записаться к стоматологу
+- assertVisible: "Напоминание.*18:00.*"
+
+# Subtasks
+- tapOn:
+    id: subtask_add
+- inputText: Call clinic
+- pressKey: Enter
+- assertVisible: "Call clinic.*"
+- tapOn:
+    id: subtask_s100_checkbox
+- assertVisible: 1/1
+
+# Repeat
+- tapOn:
+    id: task_detail_repeat
+- tapOn:
+    id: task_detail_repeat_weekly
+- assertVisible: "Повтор.*еженедельно.*"
+
+# Move to «Работа»
+- tapOn:
+    id: task_detail_list
+- tapOn:
+    id: task_detail_list_work
+- assertVisible: "Список.*Работа.*"
+
+# Complete it, then delete it
+- tapOn:
+    id: task_detail_checkbox
+- assertVisible: Выполнено
+- tapOn:
+    id: task_detail_delete
+- tapOn:
+    id: task_delete_confirm
+- assertVisible:
+    id: home_progress
+- assertNotVisible:
+    id: task_4

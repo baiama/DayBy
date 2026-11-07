@@ -1,0 +1,40 @@
+appId: com.chotatam.dayby
+name: Создать и удалить список
+tags:
+  - navigation
+---
+- runFlow: ../subflows/login.yaml
+- tapOn:
+    id: tab_lists
+- scrollUntilVisible:
+    element:
+      id: lists_new
+- tapOn:
+    id: lists_new
+- tapOn:
+    id: list_editor_name
+- inputText: Garden
+- tapOn:
+    id: list_editor_emoji_4
+- tapOn:
+    id: list_editor_save
+- assertVisible:
+    id: list_empty
+- tapOn:
+    id: list_empty_action
+- tapOn:
+    id: task_editor_title
+- inputText: Plant tulips
+- tapOn:
+    id: task_editor_save
+- assertVisible: "Plant tulips.*"
+- tapOn:
+    id: list_filter_done
+- assertVisible:
+    id: list_filter_empty
+- tapOn:
+    id: list_filter_all
+- tapOn:
+    id: list_back
+- assertVisible:
+    id: list_custom1

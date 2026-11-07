@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
 import '../../core/widgets/dayby_logo.dart';
 import '../../core/widgets/gradient_scaffold.dart';
+import '../settings/settings_provider.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
     Future.delayed(const Duration(milliseconds: 1800), () {
-      if (mounted) context.go('/login');
+      if (mounted) context.go(ref.read(onboardingDoneProvider) ? '/login' : '/onboarding');
     });
   }
 
@@ -47,15 +49,11 @@ class _SplashScreenState extends State<SplashScreen> {
               child: const DayByLogo(),
             ),
             Text('DayBy', style: AppText.logo(c.text)),
-            Text(
-              'Планировщик дел',
-              style: AppText.setting(c.text).copyWith(letterSpacing: 0.8),
-            ),
+            Text('Планировщик дел', style: AppText.setting(c.text).copyWith(letterSpacing: 0.8)),
             const Spacer(flex: 7),
             Text(
               'chotatam company',
-              style: AppText.caption(c.text)
-                  .copyWith(fontSize: 12, fontWeight: FontWeight.w500),
+              style: AppText.caption(c.text).copyWith(fontSize: 12, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 24),
           ],

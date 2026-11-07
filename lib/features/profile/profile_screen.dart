@@ -9,6 +9,7 @@ import '../../core/widgets/gradient_scaffold.dart';
 import '../../core/widgets/segmented_pills.dart';
 import '../../core/widgets/test_id.dart';
 import '../auth/auth_provider.dart';
+import '../settings/settings_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -133,20 +134,26 @@ class ProfileScreen extends ConsumerWidget {
                     testId: 'profile_notifications',
                     icon: Icons.notifications_none,
                     label: 'Уведомления',
-                    onTap: () {},
+                    onTap: () => context.push('/settings'),
                   ),
                   _MenuRow(
                     testId: 'profile_language',
                     icon: Icons.language,
                     label: 'Язык',
-                    trailing: 'Русский',
-                    onTap: () {},
+                    trailing: ref.watch(settingsProvider).language == 'ru' ? 'Русский' : 'English',
+                    onTap: () => context.push('/settings'),
+                  ),
+                  _MenuRow(
+                    testId: 'profile_settings',
+                    icon: Icons.settings_outlined,
+                    label: 'Настройки',
+                    onTap: () => context.push('/settings'),
                   ),
                   _MenuRow(
                     testId: 'profile_about',
                     icon: Icons.info_outline,
                     label: 'О приложении',
-                    onTap: () {},
+                    onTap: () => context.push('/about'),
                   ),
                   _MenuRow(
                     testId: 'profile_logout',

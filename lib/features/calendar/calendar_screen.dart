@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
+import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/test_id.dart';
+import '../tasks/task_editor_sheet.dart';
 import '../auth/auth_provider.dart';
 import '../tasks/task_tile.dart';
 import '../tasks/tasks_provider.dart';
@@ -147,10 +149,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           ),
           Expanded(
             child: dayTasks.isEmpty
-                ? Center(
-                    child: TestId(
-                      'calendar_empty',
-                      child: Text('На этот день задач нет', style: AppText.body(c.muted)),
+                ? SingleChildScrollView(
+                    padding: const EdgeInsets.only(bottom: 100),
+                    child: EmptyState(
+                      testId: 'calendar_empty',
+                      icon: Icons.event_available_outlined,
+                      title: 'На этот день задач нет',
+                      message: 'Свободный день. Запланируйте что-нибудь или отдохните.',
+                      actionLabel: 'Добавить задачу',
+                      onAction: () => showTaskEditor(context, date: _selected),
                     ),
                   )
                 : ListView(

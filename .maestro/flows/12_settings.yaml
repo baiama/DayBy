@@ -1,0 +1,35 @@
+appId: com.chotatam.dayby
+name: Настройки
+tags:
+  - profile
+---
+- runFlow: ../subflows/login.yaml
+- tapOn:
+    id: home_profile
+- tapOn:
+    id: profile_settings
+- tapOn:
+    id: settings_digest
+- tapOn:
+    id: settings_week_sunday
+- tapOn:
+    id: settings_language
+- tapOn:
+    id: settings_language_en
+- assertVisible: "Язык.*English.*"
+- tapOn:
+    id: settings_language
+- tapOn:
+    id: settings_language_ru
+
+# Hide completed tasks on home
+- tapOn:
+    id: settings_show_completed
+- tapOn:
+    id: settings_back
+- tapOn:
+    id: profile_back
+- assertNotVisible:
+    id: task_1
+- assertVisible:
+    id: task_4
